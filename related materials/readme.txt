@@ -1,0 +1,1 @@
+See partial idea of image preprocess in fifth slide in "process.pptx"

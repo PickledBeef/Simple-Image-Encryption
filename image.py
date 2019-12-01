@@ -1,27 +1,98 @@
 # Image encryption by RSA and something else
 # This should be the first mask.
 
+# 11/30/2019
+# RF: Étranger, femme, nain 
+
 import cv2
 import numpy as np
 from os import path
+from os import makedirs
+from shutil import rmtree as delete
 from random import randint
-from test3 import to_binary, to_decimal
-from RSA import main as my_rsa
-from RSA import encrypt, decrypt
+from mylibs.test3 import to_binary, to_decimal
+from mylibs.RSA import main as my_rsa
+from mylibs.RSA import encrypt, decrypt
 
-# Load color images without considering alpha channel
-# Make sure all input images are square
+def main():
+   
+    # Load color images without considering alpha channel
+    # Make sure all input images are square
+    original_content = "./input/content.png"
+    original_mask    = "./input/mask.png"
+    img  = cv2.imread(original_content, 1)
+    mask = cv2.imread(original_mask, 1)
+    
+    out = "./output/"
+    if path.exists(out):
+        delete(out)
+    makedirs(out)
+        
+    '''
+    cv2.imshow("Content", img)
+    cv2.imshow("Mask", mask)
 
-img = cv2.imread("content.png", 1)
-mask = cv2.imread("mask.png", 1)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    '''
+   
+    mask_revised = out+"mask_revised_1.png"    
 
-'''
-cv2.imshow("Content", img)
-cv2.imshow("Mask", mask)
+    if not path.exists(mask_revised):
+        format_mask(mask)  
+        cv2.imwrite(mask_revised, mask)
+    
+    original = cv2.imread(original_mask, 1)
+    revised = cv2.imread(mask_revised, 1)
+    count = image_diff(original, revised)
+    print("Diff count for original and revised: ", count) 
+    
+    content_ds = out+"content_ds.png"
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-'''
+    if not path.exists(content_ds):
+        content_smaller = my_downsample(img)
+        cv2.imwrite(content_ds, content_smaller)
+
+    img = cv2.imread(content_ds, 1)  
+    
+    hide_path = out+"mask_hide.png"
+    revised = cv2.imread(mask_revised, 1)
+    if not path.exists(hide_path):
+        hide_pixels(img, revised)
+        cv2.imwrite(hide_path, revised)
+
+    print("Diff count for revised and hide: ", image_diff(cv2.imread(mask_revised, 1), cv2.imread(hide_path, 1)))
+
+    src = cv2.imread(hide_path, 1)
+    #img_shape = (167, 167, 3) # which should be from decryption. This tuple is just for test.
+
+    message = list(img.shape)
+    if not path.exists(out+"original.txt"):
+        with open(out+"original.txt", 'w') as file:
+            file.write(", ".join([str(i) for i in message]))
+            
+    # Run RSA to generate public and private keys
+    keys = my_rsa()
+    public, private = [keys[0],keys[1]], [keys[0],keys[2]]
+    send = [encrypt(i, public[1], public[0]) for i in message]
+
+    if not path.exists(out+"send.txt"):
+        with open(out+"send.txt", 'w') as file:
+            file.write(", ".join([str(i) for i in send]))
+
+    extract = [decrypt(i, private[1], private[0]) for i in send]       
+    if not path.exists(out+"extract.txt"):
+        with open(out+"extract.txt", 'w') as file:
+            file.write(", ".join([str(i) for i in extract]))
+
+    #img_shape = (167, 167, 3)
+    img_shape = extract
+
+    extract_path = out+"mask_extract.png"
+
+    if not path.exists(extract_path):
+        img = extract_pixels(src, img_shape)
+        cv2.imwrite(extract_path, img) 
 
 # format mask
 def format_mask(mask):
@@ -33,11 +104,6 @@ def format_mask(mask):
                     channel[q][i] -= 1
     return None
 
-mask_revised = "mask_revised_1.png"    
-
-if not path.exists(mask_revised):
-    format_mask(mask)  
-    cv2.imwrite(mask_revised, mask)
 
 #return the number of different pixel value at the same position
 def image_diff(a, b):
@@ -49,13 +115,9 @@ def image_diff(a, b):
             for i in range(len(channel_a[q])):
                 if channel_a[q][i] == channel_b[q][i]:
                     count += 1
-    return count
+    return count  
 
-original = cv2.imread("mask.png", 1)
-revised = cv2.imread(mask_revised, 1)
-count = image_diff(original, revised)
-print("Diff count: ", count)    
-
+'''    
 # First mask 
 # In fact, most operations are not on images.
 # This is fake image encryption. See this idea in "first mask.docx"
@@ -64,6 +126,7 @@ print("Diff count: ", count)
 # ":" is 52; "/" is 52; "?" is 53; "." is 54; " " is 55
 
 my_dict = {}
+'''
 
 # Python: cv.Filter2D(src, dst, kernel)
 # Parameters:	
@@ -81,20 +144,11 @@ def my_downsample(img):
     ds = np.zeros(shape=((img_shape[0]-1)//3+1,(img_shape[1]-1)//3+1,3))
     for i in range(3):
         ds[:,:,i]=img[:,:,i][::3,::3]
-    return ds   
- 
-content_ds = "content_ds.png"
-
-if not path.exists(content_ds):
-    content_smaller = my_downsample(img)
-    cv2.imwrite(content_ds, content_smaller)
-
-img = cv2.imread(content_ds, 1)   
+    return ds    
     
 # Second mask
 def hide_pixels(img, mask):
     i_size = img.shape
-    print(i_size)
     m_size = mask.shape
     w = m_size[0]
     h = m_size[1]
@@ -114,45 +168,12 @@ def hide_pixels(img, mask):
                     if count2 == h:
                         count2 = 0
                         count1 += 1
-    print("loop: ", loop)
-    return None
 
-hide_path = "mask_hide.png"
-revised = cv2.imread(mask_revised, 1)
-if not path.exists(hide_path):
-    hide_pixels(img, revised)
-    cv2.imwrite(hide_path, revised)
-
-print("Diff for revised and hide: ", image_diff(cv2.imread(mask_revised, 1), cv2.imread(hide_path, 1)))
-
-src = cv2.imread(hide_path, 1)
-#img_shape = (167, 167, 3) # which should be from decryption. This tuple is just for test.
-
-message = list(img.shape)
-if not path.exists("original.txt"):
-    with open("original.txt", 'w') as file:
-        file.write(", ".join([str(i) for i in message]))
-        
-# Run RSA to generate public and private keys
-keys = my_rsa()
-public, private = [keys[0],keys[1]], [keys[0],keys[2]]
-send = [encrypt(i, public[1], public[0]) for i in message]
-
-if not path.exists("send.txt"):
-    with open("send.txt", 'w') as file:
-        file.write(", ".join([str(i) for i in send]))
-
-extract = [decrypt(i, private[1], private[0]) for i in send]       
-if not path.exists("extract.txt"):
-    with open("extract.txt", 'w') as file:
-        file.write(", ".join([str(i) for i in extract]))
-
-img_shape = (167, 167, 3)        
+    return None      
 
 def extract_pixels(mask, img_shape):
     w = img_shape[0]
     h = img_shape[1]
-    print(img_shape)
     img = np.zeros(shape=(w,h,3))
     m_w = mask.shape[0]
     m_h = mask.shape[1]
@@ -176,12 +197,8 @@ def extract_pixels(mask, img_shape):
                 value = to_decimal(bits)
                 bits = ""
                 a[o][p] = value
-    print("loop: ", loop)
+
     return img
     
-extract_path = "mask_extract.png"
-
-if not path.exists(extract_path):
-    img = extract_pixels(src, img_shape)
-    cv2.imwrite(extract_path, img)    
-
+if __name__ == "__main__":
+    main() 

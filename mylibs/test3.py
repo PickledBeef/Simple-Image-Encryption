@@ -8,6 +8,8 @@ def to_decimal(binary):
 # PowerMod
 # Video: https://www.youtube.com/watch?v=EHUgNLN8F1Y
 # Online: https://www.mtholyoke.edu/courses/quenell/s2003/ma139/js/powermod.html
+# My personal pseudocode has similar process but slower, 
+# so there is a classic power-mod function from Google search  
 def quick_mod(num, ed, n):
     r = 1
     while (ed > 0):

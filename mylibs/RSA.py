@@ -6,7 +6,7 @@
 from random import randint
 from datetime import datetime
 from math import sqrt
-from test3 import quick_mod
+from .test3 import quick_mod
 from os import path
 
 # Imported functions:
@@ -103,12 +103,12 @@ def main():
     public_path = "public.txt"
     private_path = "private.txt"
 
-    if not path.exists(public_path):
-        with open(public_path, 'w') as file:
+    if not path.exists("./output/"+public_path):
+        with open("./output/"+public_path, 'w') as file:
             file.write(", ".join([str(i) for i in public]))
             
-    if not path.exists(private_path):
-        with open(private_path, 'w') as file:
+    if not path.exists("./output/"+private_path):
+        with open("./output/"+private_path, 'w') as file:
             file.write(", ".join([str(i) for i in private]))
     return [n,e,d]
 
@@ -246,17 +246,17 @@ def generate_primes():
         if all(num%i != 0 for i in range(3, int(sqrt(num))+1, 2)):
             array.append(num)
     return array
-    
+
+# Note the path difference below if you want to change some files' location    
 def write_to_file(array):
-    with open(CONSTANTS.FILENAME_PRIME(), "w") as file:
+    with open("../input/"+CONSTANTS.FILENAME_PRIME(), "w") as file:
         file.write(", ".join([str(i) for i in array]))
         
 def read_from_file():
-    with open(CONSTANTS.FILENAME_PRIME(), "r") as file:
+    with open("./input/"+CONSTANTS.FILENAME_PRIME(), "r") as file:
         array = file.read()
     return array    
-
-'''    
+    
 if __name__ == "__main__":
     main()        
-'''        
+        
