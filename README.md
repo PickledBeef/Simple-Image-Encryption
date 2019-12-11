@@ -4,7 +4,7 @@ Simple Image Encryption for final project
 ## How to run:
 Make sure Python is installed.<br>
 **Windows** : Use the command "python   image.py".<br>
-**MacOS**&nbsp; &nbsp;: Use the command "python3  image.py".
+**MacOS**&nbsp;&nbsp;&nbsp;: Use the command "python3  image.py".
 
 ## Team member:
 **Jianan Ni**: Write the draft code, create documents, and provide the related materials.<br>
