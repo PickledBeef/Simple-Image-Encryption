@@ -102,7 +102,7 @@ def main():
     
     public_path = "public.txt"
     private_path = "private.txt"
-
+    
     if not path.exists("./output/"+public_path):
         with open("./output/"+public_path, 'w') as file:
             file.write(", ".join([str(i) for i in public]))

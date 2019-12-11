@@ -1,6 +1,6 @@
 # Image encryption by RSA and something else
 # This should be the first mask.
-
+# Author: Jianan Ni
 # 11/30/2019
 # RF: Étranger, femme, nain 
 
@@ -15,7 +15,6 @@ from mylibs.RSA import main as my_rsa
 from mylibs.RSA import encrypt, decrypt
 
 def main():
-   
     # Load color images without considering alpha channel
     # Make sure all input images are square
     original_content = "./input/content.png"
@@ -117,6 +116,7 @@ def image_diff(a, b):
                     count += 1
     return count  
 
+# Sorry, I skip this.
 '''    
 # First mask 
 # In fact, most operations are not on images.
@@ -125,7 +125,6 @@ def image_diff(a, b):
 # "A - Z" is assigned to "26 - 51";
 # ":" is 52; "/" is 52; "?" is 53; "." is 54; " " is 55
 
-my_dict = {}
 '''
 
 # Python: cv.Filter2D(src, dst, kernel)

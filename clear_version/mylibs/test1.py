@@ -1,4 +1,5 @@
 # Author: Jianan Ni
+# Test for specific input
 
 from datetime import datetime
 import time
@@ -96,24 +97,3 @@ start = time.perf_counter()
 test_b(etf, e)
 end = time.perf_counter()
 print(end - start)
-    
-'''    
-start=datetime.now()
-test_a(etf, e)
-a = datetime.now() - start
-print(a)
-'''
-
-'''    
-start=datetime.now()
-test_a(etf, e)
-a = datetime.now() - start
-test_b(etf, e)
-b = datetime.now() - start - a
-a = str(a.seconds) + '.' + str(a.microseconds)
-b = str(b.seconds) + '.' + str(b.microseconds)
-print("Time for a    : %s second(s)" %a)
-print(a)
-print("Time for b    : %s second(s)" %b)
-print(b)
-'''

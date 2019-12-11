@@ -1,5 +1,14 @@
 General idea: Hide secret ("content.png") in mask ("mask.png"). 
+Alogrithms used: simple RSA, DWT-like
 
+First of all:
+A. In "clear_version" folder, this is a clear version which remove unnecessary code and has more readable ouput.
+B. See my implementation of RSA algorithm in "./mylibs/RSA,py" (Math part)
+C. This is a draft since I still have many idea to improve it. (select random start point when hide pixels, separatedly save info when hide pixels, fill image with meaningless info but image does not change, etc.)
+D. All output will update if you run the program. You don't have to do any delete. Current existed output is a sample.
+
+
+Then:
 For inputs:
 1. Name your secret image as "content.png", then put in "input" folder.
 2. Name your mask image as "mask.png", then put in "input" folder.

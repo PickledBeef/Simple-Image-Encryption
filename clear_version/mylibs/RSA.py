@@ -8,6 +8,8 @@ from datetime import datetime
 from math import sqrt
 from .test3 import quick_mod
 from os import path
+from os import makedirs
+from shutil import rmtree as delete
 
 # Imported functions:
 # 1.
@@ -25,36 +27,7 @@ def main():
     # Initialize constants for the following functions
     global CONSTANTS  
     CONSTANTS = Const()
-    
-    '''
-    # Generate prime numbers and get runtime
-    start=datetime.now()
-    primes = generate_primes()
-    time_generate = datetime.now() - start
-    print(primes)
-    time_print = datetime.now() - start - time_generate
-    write_to_file(primes)
-    time_save = datetime.now() - start - time_generate - time_print
-    primes_read =  read_from_file()
-    time_read = datetime.now() - start - time_generate - time_print - time_save
-    primes_read = [int(i) for i in primes_read.split(", ")] 
-    time_transform = datetime.now() - start - time_generate - time_print - time_save - time_read
-    
-    # get runtime in string format
-    time_generate = str(time_generate.seconds) + '.' + str(time_generate.microseconds)
-    time_print    = str(time_print.seconds)    + '.' + str(time_print.microseconds)
-    time_save     = str(time_save.seconds)     + '.' + str(time_save.microseconds)
-    time_read     = str(time_read.seconds)     + '.' + str(time_read.microseconds)
-    time_transform= str(time_transform.seconds)+ '.' + str(time_transform.microseconds)
-    
-    # print runtime of each process
-    print("Time for generating primes : %s second(s)" %(time_generate))
-    print("Time for printing primes   : %s second(s)" %(time_print))
-    print("Time for saving primes     : %s second(s)" %(time_save))
-    print("Time for reading primes    : %s second(s)" %(time_read))
-    print("Time for transform read    : %s second(s)" %(time_transform))
-    '''
-    
+
     primes =  read_from_file()
     primes = [int(i) for i in primes.split(", ")]
     p, q = pick_two(primes)
@@ -103,12 +76,17 @@ def main():
     public_path = "public.txt"
     private_path = "private.txt"
 
-    if not path.exists("./output/"+public_path):
-        with open("./output/"+public_path, 'w') as file:
+    out = "./keys/"
+    if path.exists(out):
+        delete(out)
+    makedirs(out)
+    
+    if not path.exists(out+public_path):
+        with open(out+public_path, 'w') as file:
             file.write(", ".join([str(i) for i in public]))
             
-    if not path.exists("./output/"+private_path):
-        with open("./output/"+private_path, 'w') as file:
+    if not path.exists(out+private_path):
+        with open(out+private_path, 'w') as file:
             file.write(", ".join([str(i) for i in private]))
     return [n,e,d]
 
